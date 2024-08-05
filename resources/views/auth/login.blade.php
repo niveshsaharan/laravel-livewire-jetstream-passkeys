@@ -13,7 +13,7 @@
             </div>
         @endsession
 
-        <form x-data="loginForm" method="POST" action="{{ route('login') }}">
+        <form x-data="loginForm" x-init="login" method="POST" action="{{ route('login') }}">
 
             @csrf
 
@@ -116,7 +116,11 @@
                                         }
                                     })
                                     .catch(function (error) {
-                                        alert(error);
+                                        if(error?.response.status === 422){
+                                            alert("Passkey is not valid.")
+                                        }else{
+                                            alert(error?.response?.data?.message || error);
+                                        }
                                     });
                             }
                         );
