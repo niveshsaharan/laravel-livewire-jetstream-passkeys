@@ -116,7 +116,7 @@
                                         }
                                     })
                                     .catch(function (error) {
-                                        if(error?.response.status === 422){
+                                        if(error?.response?.status === 422){
                                             alert("Passkey is not valid.")
                                         }else{
                                             alert(error?.response?.data?.message || error);

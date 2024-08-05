@@ -25,7 +25,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PHP_UPLOAD_MAX_FILE_SIZE=100M \
     PHP_ALLOW_URL_FOPEN=Off
 
-# Prepare base container: 
+# Prepare base container:
 # 1. Install PHP, Composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 COPY .fly/php/ondrej_ubuntu_php.gpg /etc/apt/trusted.gpg.d/ondrej_ubuntu_php.gpg
@@ -51,20 +51,21 @@ COPY .fly/supervisor/ /etc/supervisor/
 COPY .fly/entrypoint.sh /entrypoint
 COPY .fly/start-nginx.sh /usr/local/bin/start-nginx
 RUN chmod 754 /usr/local/bin/start-nginx
-    
+
 # 3. Copy application code, skipping files based on .dockerignore
 COPY . /var/www/html
 WORKDIR /var/www/html
 
-# 4. Setup application dependencies 
+# 4. Setup application dependencies
 RUN composer install --optimize-autoloader --no-dev \
     && mkdir -p storage/logs \
+    && php artisan migrate \
     && php artisan optimize:clear \
     && chown -R www-data:www-data /var/www/html \
     && echo "MAILTO=\"\"\n* * * * * www-data /usr/bin/php /var/www/html/artisan schedule:run" > /etc/cron.d/laravel \
     && sed -i='' '/->withMiddleware(function (Middleware \$middleware) {/a\
         \$middleware->trustProxies(at: "*");\
-    ' bootstrap/app.php; \ 
+    ' bootstrap/app.php; \
     if [ -d .fly ]; then cp .fly/entrypoint.sh /entrypoint; chmod +x /entrypoint; fi;
 
 
