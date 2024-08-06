@@ -6,3 +6,10 @@ if [ ! -d "$FOLDER" ]; then
     rm -rf /var/www/html/storage_
     mkdir -p /var/www/html/storage/framework/{sessions,views,cache}
 fi
+
+FOLDER=/var/www/html/storage/database
+if [ ! -d "$FOLDER" ]; then
+    echo "$FOLDER is not a directory, initializing database"
+    mkdir /var/www/html/storage/database
+    touch /var/www/html/storage/database/database.sqlite
+fi
